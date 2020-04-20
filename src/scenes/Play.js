@@ -6,6 +6,7 @@ class Play extends Phaser.Scene {
     preload() {
         // load images/tile sprites
         this.load.image('rocket', './assets/rocket.png');
+        this.load.image('antenna', './assets/antenna.png');
         // load spritesheet
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
     }
@@ -14,6 +15,8 @@ class Play extends Phaser.Scene {
         console.log(game.settings.mult);
         // place tile sprite
         this.starfield = this.add.tileSprite(0, 0, 640, 480, 'starfield').setOrigin(0, 0);
+        this.debris = this.add.tileSprite(0, 0, 640, 480, 'debris').setOrigin(0, 0);
+
 
     
         // white rectangle borders
@@ -22,7 +25,7 @@ class Play extends Phaser.Scene {
         //this.add.rectangle(0, 5, 32, 455, 0xFACADE).setOrigin(0, 0);
         //this.add.rectangle(610, 0, 32, 455, 0xFACADE).setOrigin(0, 0);
         // green UI background
-        this.add.rectangle(37, 42, 566, 64, 0x00FF00).setOrigin(0, 0);
+        this.add.rectangle(37, 42, 566, 64, 0xFACADE).setOrigin(0, 0);
 
         // add rocket (p1)
         this.p1Rocket = new Rocket(this, game.config.width/2 - 8, 431, 'rocket').setScale(0.5, 0.5).setOrigin(0, 0);
@@ -44,9 +47,13 @@ class Play extends Phaser.Scene {
             this.ship03 = new Spaceship4(this, game.config.width, 260, 'spaceship', 0, 10).setOrigin(0,0);
         } else {
             // add spaceships (x3)
+            // add antennas (x3)
             this.ship01 = new Spaceship(this, game.config.width + 192, 132, 'spaceship', 0, 30).setOrigin(0,0);
             this.ship02 = new Spaceship(this, game.config.width + 96, 196, 'spaceship', 0, 20).setOrigin(0,0);
             this.ship03 = new Spaceship(this, game.config.width, 260, 'spaceship', 0, 10).setOrigin(0,0);
+            this.antenna01 = new Antenna(this, game.config.width + 150, 132, 'antenna', 0, 60).setOrigin(0,0);
+            this.antenna02 = new Antenna(this, game.config.width + 96, 185, 'antenna', 0, 60).setOrigin(0,0);
+            this.antenna03 = new Antenna(this, game.config.width, 120, 'antenna', 0, 60).setOrigin(0,0);
         }
 
 
@@ -91,7 +98,7 @@ class Play extends Phaser.Scene {
         let scoreConfig = {
             fontFamily: 'Courier',
             fontSize: '28px',
-            backgroundColor: '#F3B141',
+            backgroundColor: '#EEE8AA',
             color: '#843605',
             align: 'right',
             padding: {
@@ -116,7 +123,7 @@ class Play extends Phaser.Scene {
 
         //this.timeMid = this.add.text(225, 54, Math.floor(this.timeMe/1000), scoreConfig);
 
-       this.timeMid = this.add.text(225, 54, this.timeMe-this.clock.getElapsedSeconds(), scoreConfig);
+       this.timeMid = this.add.text(225, 54, 'Time: '+ this.timeMe-this.clock.getElapsedSeconds(), scoreConfig);
 
 
     }
@@ -132,7 +139,9 @@ class Play extends Phaser.Scene {
             this.scene.start("menuScene");
         }
 
-        this.starfield.tilePositionX -= 4;  // scroll tile sprite
+        this.starfield.tilePositionX -= 3;  // scroll tile sprite
+        this.debris.tilePositionX -= 1;  // scroll tile sprite
+
 
         if (!this.gameOver) {         
             
@@ -143,6 +152,10 @@ class Play extends Phaser.Scene {
             this.ship01.update();           // update spaceships (x3)
             this.ship02.update();
             this.ship03.update();
+            this.antenna01.update();
+            this.antenna02.update();
+            this.antenna03.update();
+
         }             
         // check collisions
         if(this.checkCollision(this.p1Rocket, this.ship03)) {
@@ -156,6 +169,19 @@ class Play extends Phaser.Scene {
         if (this.checkCollision(this.p1Rocket, this.ship01)) {
             this.p1Rocket.reset();
             this.shipExplode(this.ship01);
+        }
+
+        if(this.checkCollision(this.p1Rocket, this.antenna01)) {
+            this.p1Rocket.reset();
+            this.shipExplode(this.antenna01);   
+        }
+        if (this.checkCollision(this.p1Rocket, this.antenna02)) {
+            this.p1Rocket.reset();
+            this.shipExplode(this.antenna02);
+        }
+        if (this.checkCollision(this.p1Rocket, this.antenna03)) {
+            this.p1Rocket.reset();
+            this.shipExplode(this.antenna03);
         }
         
         if (game.settings.mult == 1) {
@@ -174,6 +200,19 @@ class Play extends Phaser.Scene {
                 this.shipExplode(this.ship01);
             }
 
+            if(this.checkCollision(this.p2Rocket, this.antenna01)) {
+                this.p2Rocket.reset();
+                this.shipExplode(this.antenna01);   
+            }
+            if (this.checkCollision(this.p2Rocket, this.antenna02)) {
+                this.p2Rocket.reset();
+                this.shipExplode(this.antenna02);
+            }
+            if (this.checkCollision(this.p2Rocket, this.antenna03)) {
+                this.p2Rocket.reset();
+                this.shipExplode(this.antenna03);
+            }
+
         }
 
         if(this.hScore <= this.p1Score){
@@ -183,7 +222,7 @@ class Play extends Phaser.Scene {
         //this.timeMe-=this.clock.getElapsed()        ;
         //this.timeMid.setText(Math.floor(this.timeMe/1000));
 
-        this.timeMid.setText(Math.floor(this.timeMe-this.clock.getElapsedSeconds()));
+        this.timeMid.setText('Time: ' + Math.floor(this.timeMe-this.clock.getElapsedSeconds()));
 
 
     }

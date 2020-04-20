@@ -9,11 +9,14 @@ class Menu extends Phaser.Scene {
         this.load.audio('sfx_explosion', './assets/explosion38.wav');
         this.load.audio('sfx_rocket', './assets/rocket_shot.wav');
         this.load.image('starfield', './assets/space-bg.jpg');
+        this.load.image('debris', './assets/space-debris.png');
         this.load.image('spaceship', './assets/spaceship.png');
     }
 
     create() {
         this.starfield = this.add.tileSprite(0, 0, 640, 480, 'starfield').setOrigin(0, 0);
+        this.debris = this.add.tileSprite(0, 0, 640, 480, 'debris').setOrigin(0, 0);
+
         this.ship01 = new Spaceship(this, game.config.width + 192, 132, 'spaceship', 0, 30).setOrigin(0,0);
         this.ship02 = new Spaceship(this, game.config.width + 96, 196, 'spaceship', 0, 30).setOrigin(0,0);
         this.ship03 = new Spaceship(this, game.config.width, 260, 'spaceship', 0, 30).setOrigin(0,0);
@@ -60,7 +63,9 @@ class Menu extends Phaser.Scene {
     }
 
     update() {
-        this.starfield.tilePositionX -= 4;  // scroll tile sprite
+        this.starfield.tilePositionX -= 3;  // scroll tile sprite
+        this.debris.tilePositionX -= 1;  // scroll tile sprite
+
         this.ship01.update();           // update spaceships (x3)
         this.ship02.update();
         this.ship03.update();
